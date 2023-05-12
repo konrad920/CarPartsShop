@@ -2,22 +2,37 @@
 
 namespace CarPartsShop.Repositories
 {
-    public class CarPartsRepository
+    public class CarPartsRepository <T> : IRepository<T>
+        where T : class, IEntity, new()
     {
-        private readonly List<CarParts> _carparts = new();
+        protected readonly List<T> _carparts = new();
 
-        public void Add(CarParts item)
+        public void Add(T item)
         {
             item.Id = _carparts.Count + 1;
             _carparts.Add(item);
         }
 
+        public IEnumerable<T> GetAll()
+        {
+            return _carparts.ToArray();
+        }
+
+        public T GetById(int id)
+        {
+            var item = _carparts[id];
+            return item;
+        }
+
+        public void Remove(T item)
+        {
+            _carparts.Remove(item);
+            item.Id--;
+        }
+
         public void Save()
         {
-            foreach (var item in _carparts)
-            {
-                Console.WriteLine(item);
-            }
+
         }
     }
 }

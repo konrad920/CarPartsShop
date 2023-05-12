@@ -1,11 +1,8 @@
 ﻿namespace CarPartsShop.Entities
 {
-    public class CarParts
+    public class CarParts : EntityBase
     {
-        public int Id = 0;
         public string? NameOfPart { get; set; }
-
-        public CarParts() { }
-        public override string ToString() => $"Id part: {Id}, Name of part: {NameOfPart}";
+        public override string ToString() => $"Id part: {base.Id}, Name of part: {NameOfPart}";
     }
 }
