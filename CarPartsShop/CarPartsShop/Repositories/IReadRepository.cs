@@ -6,6 +6,6 @@ namespace CarPartsShop.Repositories
         where T : class, IEntity
     {
         IEnumerable<T> GetAll();
-        T GetById(int id);
+        T? GetById(int id);
     }
 }
