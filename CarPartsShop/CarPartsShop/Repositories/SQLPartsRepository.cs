@@ -23,26 +23,46 @@ namespace CarPartsShop.Repositories
         public event EventHandler<T>? ItemAdded;
 
         public event EventHandler<T>? ItemRemoved;
+
+        public event EventHandler<T>? FileSavedAdded;
+
+        public event EventHandler<T>? FileSavedRemoved;
         public IEnumerable<T> GetAll()
         {
             return _carParts.ToList();
         }
 
-        public List<string> GetAll1()
+        public Dictionary<int, string> GetAll1()
         {
             if (File.Exists(fileName))
             {
-                var linesFromFile = new List<string>();
+                var linesFromFile = new Dictionary<int, string>();
                 using (var reader = File.OpenText(fileName))
                 {
                     var line = reader.ReadLine();
+                    int i = 1;
                     while (line != null)
                     {
-                        linesFromFile.Add(line);
+                        linesFromFile.Add(i, line);
                         line = reader.ReadLine();
+                        i++;
                     }
                 }
                 return linesFromFile;
+            }
+            else
+            {
+                throw new Exception("File does not exist");
+            }
+        }
+
+        public string GetById1(int id)
+        {
+            if (File.Exists(fileName))
+            {
+                var carParts = GetAll1();
+                var carPart = carParts[id];
+                return carPart;
             }
             else
             {
@@ -63,6 +83,7 @@ namespace CarPartsShop.Repositories
             }
             //_itemAddedCallBack?.Invoke(item);
             ItemAdded?.Invoke(this, item);
+            FileSavedAdded?.Invoke(this, item);
         } 
 
 
@@ -71,16 +92,17 @@ namespace CarPartsShop.Repositories
             if (File.Exists(fileName))
             {
                 var carParts = GetAll1();
-                carParts.RemoveAt(item.Id-1);
+                carParts.Remove(item.Id);
                 File.Delete(fileName);
                 using (var writer = File.AppendText(fileName))
                 {
                     foreach (var part in carParts)
                     {
-                        writer?.WriteLine(part);
+                        writer?.WriteLine(part.Value);
                     }
                 }
                 ItemRemoved?.Invoke(this, item);
+                FileSavedRemoved?.Invoke(this, item);
             }
             else
             {

@@ -7,12 +7,34 @@ Console.WriteLine("Welcome in my program CarPartsShop");
 Console.WriteLine("(A)Add new part");
 Console.WriteLine("(R)Remove a part");
 Console.WriteLine("(S)Show all parts");
+Console.WriteLine("(I)Show part by Id");
 Console.WriteLine("(Q)Quit the program");
 
+string eventListFile = "eventListFile.txt";
 //var itemAdded = new Action<CarParts>(CarPartAdded);
 var carRepository = new SQLPartsRepository<CarParts>(new CarPartsDBContext());
 carRepository.ItemAdded += CarPartRepositoryOnItemAdded;
 carRepository.ItemRemoved += CarPartRepositoryOnItemRemoved;
+carRepository.FileSavedAdded += EventSavedToFileAdded;
+carRepository.FileSavedRemoved += EventSavedToFileRemoved;
+
+
+void EventSavedToFileRemoved(object sender, CarParts e)
+{
+    using (var writer = File.AppendText(eventListFile))
+    {
+        var data = DateTime.Now;
+        writer.WriteLine($"{data}, {e.NameOfPart}, from {sender.GetType().Name}, removed");
+    }
+}
+void EventSavedToFileAdded(object sender, CarParts e)
+{
+    using (var writer = File.AppendText(eventListFile))
+    {
+        var data = DateTime.Now;
+        writer.WriteLine($"{data}, {e.NameOfPart}, from {sender.GetType().Name}, added");
+    }
+}
 static void CarPartRepositoryOnItemAdded(object sender, CarParts e)
 {
     Console.WriteLine($"Car Parts added: {e.NameOfPart}, from {sender.GetType().Name}");
@@ -63,6 +85,20 @@ while (true)
             }
         }
         catch(Exception ex)
+        {
+            Console.WriteLine($"Exception catched: {ex.Message}");
+        }
+    }
+    else if (userAnswer == "i" || userAnswer == "I")
+    {
+        try
+        {
+            Console.Write("Which part you want see, enter Id: ");
+            var idToShow = Console.ReadLine();
+            var carPartToShow = carRepository.GetById1(int.Parse(idToShow));
+            Console.WriteLine(carPartToShow);
+        }
+        catch (Exception ex)
         {
             Console.WriteLine($"Exception catched: {ex.Message}");
         }
