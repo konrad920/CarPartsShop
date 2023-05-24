@@ -24,8 +24,6 @@ namespace CarPartsShop
         }
         public void Run()
         {
-            Console.WriteLine("I am here in Run() method");
-
             //adding
             var employees = new[]
             {
@@ -58,19 +56,19 @@ namespace CarPartsShop
                 _carPartsRepository.Add(carPart);
             }
 
-            // metody bez linq
-            foreach (var carPart in _carPartsProvider.FilterCarParts(500M))
+            // metody linq
+
+            foreach (var model in _carPartsProvider.ChunkyCarParts(3))
             {
-                Console.WriteLine(carPart);
+                Console.WriteLine("Chunk");
+                foreach (var i in model)
+                {
+                    Console.WriteLine(i);
+                }
+                Console.WriteLine("#####");
             }
 
-            Console.WriteLine(_carPartsProvider.GetMinimalPriceOfCarParts());
 
-            foreach(var carPart in _carPartsProvider.GetUniqueModelOfCars())
-            {
-                Console.WriteLine(carPart);
-            }
-           
         }
 
         public static List<CarParts> GenerateSamplesCarParts()
