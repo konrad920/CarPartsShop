@@ -113,6 +113,7 @@ namespace CarPartsShop.Repositories
         {
             _carParts.Remove(item);
             ItemRemoved?.Invoke(this, item);
+            FileSavedRemoved?.Invoke(this, item);
         }
 
         public void Save()

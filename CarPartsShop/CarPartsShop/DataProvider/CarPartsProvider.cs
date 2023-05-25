@@ -12,18 +12,6 @@ namespace CarPartsShop.DataProvider
             _carPartsRepository = carPartsRepository;
         }
 
-        public string AnonymousClass()
-        {
-            var carParts = _carPartsRepository.GetAll();
-            var list = carParts.Select(carPart => new
-            {
-                Id = carPart.Id,
-                ModelOfCar = carPart.ModelOfCar,
-                IsUsed = carPart.IsUsed
-            }).ToString();
-
-            return list;
-        }
 
         public List<CarParts[]> ChunkyCarParts(int size)
         {
@@ -58,19 +46,6 @@ namespace CarPartsShop.DataProvider
         {
             var carParts = _carPartsRepository.GetAll();
             return carParts.Select(x=> x.Price).Min();
-        }
-
-        public List<CarParts> GetSpecificColumns()
-        {
-            var carParts = _carPartsRepository.GetAll();
-            var list = carParts.Select(carPart => new CarParts
-            {
-                Id = carPart.Id,
-                ModelOfCar = carPart.ModelOfCar,
-                IsUsed = carPart.IsUsed
-            }).ToList();
-
-            return list;
         }
 
         public List<string> GetUniqueModelOfCars()

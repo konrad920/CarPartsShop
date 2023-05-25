@@ -4,12 +4,14 @@ using CarPartsShop;
 using CarPartsShop.DataProvider;
 using CarPartsShop.Entities;
 using CarPartsShop.Repositories;
+using CarPartsShop.UserCommunication;
 using Microsoft.Extensions.DependencyInjection;
 
 var services = new ServiceCollection();
 services.AddSingleton<IApp, App>();
 services.AddSingleton<IRepository<Employee>, ListRepository<Employee>>();
 services.AddSingleton<IRepository<CarParts>, ListRepository<CarParts>>();
+services.AddSingleton<IUserCommunication, UserCommunication>();
 services.AddSingleton<ICarPartsProvider, CarPartsProvider>();
 
 var serviceProvider = services.BuildServiceProvider();
@@ -33,10 +35,10 @@ app.Run();
 //string eventListFile = "eventListFile.txt";
 ////var itemAdded = new Action<CarParts>(CarPartAdded);
 //var carRepository = new SQLPartsRepository<CarParts>(new CarPartsDBContext());
-//carRepository.ItemAdded += CarPartRepositoryOnItemAdded;
-//carRepository.ItemRemoved += CarPartRepositoryOnItemRemoved;
-//carRepository.FileSavedAdded += EventSavedToFileAdded;
-//carRepository.FileSavedRemoved += EventSavedToFileRemoved;
+//carrepository.itemadded += carpartrepositoryonitemadded;
+//carrepository.itemremoved += carpartrepositoryonitemremoved;
+//carrepository.filesavedadded += eventsavedtofileadded;
+//carrepository.filesavedremoved += eventsavedtofileremoved;
 
 
 //void EventSavedToFileRemoved(object sender, CarParts e)
