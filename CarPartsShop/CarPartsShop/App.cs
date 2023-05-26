@@ -20,21 +20,24 @@ namespace CarPartsShop
         private readonly IUserCommunication _userCommunication;
 
         private readonly ICarPartsProvider _carPartsProvider;
+
         public App(
             IRepository<Employee> employeeRepository, 
-            IRepository<CarParts> carPArtsRepository,
+            IRepository<CarParts> carPartsRepository,
             IUserCommunication userCommunication,
             ICarPartsProvider carPartsProvider)
         {
             _employeeRepository = employeeRepository;
-            _carPartsRepository = carPArtsRepository;
+            _carPartsRepository = carPartsRepository;
             _userCommunication = userCommunication;
             _carPartsProvider = carPartsProvider;
         }
         public void Run()
         {
+            
             while (true)
             {
+                
                 Console.Write(_userCommunication.BeginProgram());
                 var userChoose = _userCommunication.UserChoose();
                 if (userChoose == "q" || userChoose == "Q")
@@ -56,6 +59,11 @@ namespace CarPartsShop
                 else if (userChoose == "i" || userChoose == "I")
                 {
                     _userCommunication.GetPartById();
+                }
+                else
+                {
+                    Console.WriteLine("Wrong char, please try again");
+                    continue;
                 }
             }
         }

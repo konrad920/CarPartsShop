@@ -17,6 +17,22 @@ namespace CarPartsShop.UserCommunication
             _carPartsRepository = carPartsRepository;
         }
 
+        public static void CarPartRepositoryOnItemAdded(object sender, CarParts e)
+        {
+            Console.WriteLine($"Car Parts added: {e.NameOfPart}, from {sender.GetType().Name}");
+        }
+
+        public static void CarPartRepositoryOnItemRemoved(object sender, CarParts e)
+        {
+            Console.WriteLine($"Car Parts removed: {e.NameOfPart}, from {sender.GetType().Name}");
+        }
+
+        private void cos()
+        {
+            var item = new ListRepository<CarParts>();
+            item.ItemAdded += CarPartRepositoryOnItemAdded;
+        }
+
         public string BeginProgram()
         {
             var sb = new StringBuilder();
