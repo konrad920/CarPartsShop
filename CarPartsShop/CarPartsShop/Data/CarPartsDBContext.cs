@@ -1,4 +1,4 @@
-﻿using CarPartsShop.Entities;
+﻿using CarPartsShop.Data.Entities;
 using Microsoft.EntityFrameworkCore;
 
 

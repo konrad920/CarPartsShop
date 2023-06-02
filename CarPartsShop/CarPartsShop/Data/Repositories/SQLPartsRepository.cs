@@ -1,11 +1,11 @@
-﻿using CarPartsShop.Entities;
+﻿using CarPartsShop.Data.Entities;
 using Microsoft.EntityFrameworkCore;
 using System.Reflection.PortableExecutable;
 
-namespace CarPartsShop.Repositories
+namespace CarPartsShop.Data.Repositories
 {
     //public delegate void ItemAdded<in T>(T item);
-    public class SQLPartsRepository <T> : IRepository<T>
+    public class SQLPartsRepository<T> : IRepository<T>
         where T : class, IEntity, new()
     {
         private readonly DbContext _dbContext;
@@ -84,7 +84,7 @@ namespace CarPartsShop.Repositories
             //_itemAddedCallBack?.Invoke(item);
             ItemAdded?.Invoke(this, item);
             FileSavedAdded?.Invoke(this, item);
-        } 
+        }
 
 
         public void Remove1(T item)

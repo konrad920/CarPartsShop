@@ -1,13 +1,13 @@
-﻿using CarPartsShop.Entities;
-using CarPartsShop.Repositories;
+﻿using CarPartsShop.Data.Entities;
+using CarPartsShop.Data.Repositories;
 using System;
 
-namespace CarPartsShop.DataProvider
+namespace CarPartsShop.Components.DataProvider
 {
     public class CarPartsProvider : ICarPartsProvider
     {
         private readonly IRepository<CarParts> _carPartsRepository;
-        public CarPartsProvider(IRepository<CarParts> carPartsRepository) 
+        public CarPartsProvider(IRepository<CarParts> carPartsRepository)
         {
             _carPartsRepository = carPartsRepository;
         }
@@ -23,8 +23,8 @@ namespace CarPartsShop.DataProvider
         {
             var carParts = _carPartsRepository.GetAll();
             return carParts
-                .DistinctBy(x=> x.ModelOfCar)
-                .OrderBy(x=> x.Id)
+                .DistinctBy(x => x.ModelOfCar)
+                .OrderBy(x => x.Id)
                 .ToList();
         }
 
@@ -39,13 +39,13 @@ namespace CarPartsShop.DataProvider
             var carParts = _carPartsRepository.GetAll();
             return carParts.FirstOrDefault(
                 x => x.ModelOfCar == model,
-                new CarParts { Id = -1, NameOfPart = "NOT FOUND"});
+                new CarParts { Id = -1, NameOfPart = "NOT FOUND" });
         }
 
         public decimal GetMinimalPriceOfCarParts()
         {
             var carParts = _carPartsRepository.GetAll();
-            return carParts.Select(x=> x.Price).Min();
+            return carParts.Select(x => x.Price).Min();
         }
 
         public List<string> GetUniqueModelOfCars()
@@ -71,7 +71,7 @@ namespace CarPartsShop.DataProvider
             var carParts = _carPartsRepository.GetAll();
             return carParts
                 .OrderBy(x => x.NameOfPart)
-                .ThenBy(x=> x.ModelOfCar)
+                .ThenBy(x => x.ModelOfCar)
                 .ToList();
         }
 
@@ -109,7 +109,7 @@ namespace CarPartsShop.DataProvider
         {
             var carParts = _carPartsRepository.GetAll();
             return carParts
-                .OrderBy(x=> x.NameOfPart)
+                .OrderBy(x => x.NameOfPart)
                 .Take(howMany)
                 .ToList();
         }
@@ -128,14 +128,14 @@ namespace CarPartsShop.DataProvider
             var carParts = _carPartsRepository.GetAll();
             return carParts
                 .OrderBy(x => x.NameOfPart)
-                .TakeWhile(x=> x.NameOfPart.StartsWith(prefix))
+                .TakeWhile(x => x.NameOfPart.StartsWith(prefix))
                 .ToList();
         }
 
         public List<CarParts> WhereModelIs(string model)
         {
             var carParts = _carPartsRepository.GetAll();
-            return carParts.Where(x=> x.ModelOfCar == model).ToList();
+            return carParts.Where(x => x.ModelOfCar == model).ToList();
         }
 
         public List<CarParts> WhereNameStartsWith(string prefix)

@@ -1,8 +1,8 @@
-﻿using CarPartsShop.Entities;
+﻿using CarPartsShop.Data.Entities;
 
-namespace CarPartsShop.Repositories
+namespace CarPartsShop.Data.Repositories
 {
-    public interface IWriteRepository<in T> 
+    public interface IWriteRepository<in T>
         where T : class, IEntity
     {
         public void Add(T item);

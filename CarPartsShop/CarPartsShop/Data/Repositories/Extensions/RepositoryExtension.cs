@@ -1,6 +1,6 @@
-﻿using CarPartsShop.Entities;
+﻿using CarPartsShop.Data.Entities;
 
-namespace CarPartsShop.Repositories.Extensions
+namespace CarPartsShop.Data.Repositories.Extensions
 {
     public static class RepositoryExtension
     {

@@ -1,11 +1,11 @@
-﻿using CarPartsShop.Entities;
+﻿using CarPartsShop.Data.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CarPartsShop.Repositories
+namespace CarPartsShop.Data.Repositories
 {
     public class ListRepository<T> : IRepository<T>
         where T : class, IEntity, new()
@@ -34,7 +34,7 @@ namespace CarPartsShop.Repositories
 
         public T? GetById(int id)
         {
-            if(_items.Exists(x => x.Id == id))
+            if (_items.Exists(x => x.Id == id))
             {
                 return _items.Single(item => item.Id == id);
             }
@@ -46,7 +46,7 @@ namespace CarPartsShop.Repositories
             _items?.Remove(item);
             ItemRemoved?.Invoke(this, item);
             FileSavedRemoved?.Invoke(this, item);
-        }   
+        }
 
         public void Save()
         {

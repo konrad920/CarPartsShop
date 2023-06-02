@@ -1,10 +1,11 @@
 ﻿
 
 using CarPartsShop;
-using CarPartsShop.DataProvider;
-using CarPartsShop.Entities;
-using CarPartsShop.Repositories;
-using CarPartsShop.UserCommunication;
+using CarPartsShop.Components.CsvReader;
+using CarPartsShop.Components.DataProvider;
+using CarPartsShop.Components.UserCommunication;
+using CarPartsShop.Data.Entities;
+using CarPartsShop.Data.Repositories;
 using Microsoft.Extensions.DependencyInjection;
 
 var services = new ServiceCollection();
@@ -13,6 +14,7 @@ services.AddSingleton<IRepository<Employee>, ListRepository<Employee>>();
 services.AddSingleton<IRepository<CarParts>, ListRepository<CarParts>>();
 services.AddSingleton<IUserCommunication, UserCommunication>();
 services.AddSingleton<ICarPartsProvider, CarPartsProvider>();
+services.AddSingleton<ICsvReader, CsvReader>();
 
 var serviceProvider = services.BuildServiceProvider();
 var app = serviceProvider.GetService<IApp>()!;

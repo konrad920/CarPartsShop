@@ -1,13 +1,19 @@
-﻿using CarPartsShop.DataProvider;
-using CarPartsShop.Entities;
-using CarPartsShop.Repositories;
-using CarPartsShop.UserCommunication;
+﻿using CarPartsShop.Components.CsvReader;
+using CarPartsShop.Components.CsvReader.Models;
+using CarPartsShop.Components.DataProvider;
+using CarPartsShop.Components.UserCommunication;
+using CarPartsShop.Data.Entities;
+using CarPartsShop.Data.Repositories;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using System.Resources;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
-
+using System.Xml.Linq;
 
 namespace CarPartsShop
 {
@@ -21,170 +27,213 @@ namespace CarPartsShop
 
         private readonly ICarPartsProvider _carPartsProvider;
 
+        private readonly ICsvReader _csvReader;
+
         public App(
-            IRepository<Employee> employeeRepository, 
+            IRepository<Employee> employeeRepository,
             IRepository<CarParts> carPartsRepository,
             IUserCommunication userCommunication,
-            ICarPartsProvider carPartsProvider)
+            ICarPartsProvider carPartsProvider,
+            ICsvReader csvReader)
         {
             _employeeRepository = employeeRepository;
             _carPartsRepository = carPartsRepository;
             _userCommunication = userCommunication;
             _carPartsProvider = carPartsProvider;
+            _csvReader = csvReader;
         }
         public void Run()
         {
-            
-            while (true)
+            //var cars = _csvReader.CarProcess("Resources\\Files\\fuel.csv");
+            //var manufactures = _csvReader.ManufacturerProcess("Resources\\Files\\manufacturers.csv");
+
+            //var groups = cars.GroupBy(x => x.Manufacturer)
+            //    .Select(g => new
+            //    {
+            //        Name = g.Key,
+            //        Max = g.Max(c => c.Combined),
+            //        Averange = g.Average(c => c.Combined),
+
+            //    })
+            //    .OrderBy(x => x.Averange)
+            //    .ThenBy(x => x.Name);
+
+
+            //var groups1 = cars.Join(
+            //    manufactures,
+            //    c => c.Manufacturer,
+            //    m => m.Name,
+            //    (car, manufactur) => new
+            //    {
+            //        manufactur.Name,
+            //        car.City,
+            //        car.Combined
+            //    })
+            //    .OrderByDescending(x => x.Combined)
+            //    .ThenBy(x => x.Name);
+
+            //var groups2 = cars.GroupJoin(
+            //    manufactures,
+            //    c => c.Manufacturer,
+            //    m => m.Name,
+            //    (c, m) => new
+            //    {
+            //        Cars = c,
+            //        Manufactors = m
+            //    })
+            //    .OrderBy(x => x.Manufactors);
+
+            //CreateXML();
+            //ReadXML();
+
+            //void CreateXML()
+            //{
+            //    var cars = _csvReader.CarProcess("Resources\\Files\\fuel.csv");
+            //    var document = new XDocument();
+            //    var records = new XElement("Cars", cars
+            //    .Select(x =>
+            //        new XElement("Car",
+            //            new XAttribute("Name", x.Name),
+            //            new XAttribute("Combined", x.Combined),
+            //            new XAttribute("Manufacturer", x.Manufacturer)
+            //            )
+            //    ));
+
+            //    document.Add(records);
+            //    document.Save("fuel.xml");
+            //}
+
+
+            //static void ReadXML()
+            //{
+            //    var document = XDocument.Load("fuel.xml");
+            //    var names = document
+            //        .Elements("Cars")
+            //        .Elements("Car")
+            //        .Where(x => x.Attribute("Manufacturer")?.Value == "BMW")
+            //        .Select(x => x.Attribute("Name")?.Value);
+
+            //    foreach (var name in names)
+            //    {
+            //        Console.WriteLine(name);
+            //    }
+            //}
+
+            //foreach (var group in groups)
+            //{
+            //    Console.WriteLine(group.Name);
+            //    Console.WriteLine($" \t Max: {group.Max}");
+            //    Console.WriteLine($" \t Averange: {group.Averange}");
+            //}
+
+            //foreach (var group in groups1)
+            //{
+            //    Console.WriteLine(group.Name);
+            //    Console.WriteLine($" \t City: {group.City}");
+            //    Console.WriteLine($" \t Combined: {group.Combined}");
+            //}
+
+            //zadanie domowe
+            void CreateXMLWithStencil()
             {
-                
-                Console.Write(_userCommunication.BeginProgram());
-                var userChoose = _userCommunication.UserChoose();
-                if (userChoose == "q" || userChoose == "Q")
-                {
-                    break;
-                }
-                else if (userChoose == "a" || userChoose == "A")
-                {
-                    _userCommunication.AddNewCarPart();
-                }
-                else if (userChoose == "r" || userChoose == "R")
-                {
-                    _userCommunication.RemovePartId();
-                }
-                else if (userChoose == "s" || userChoose == "S")
-                {
-                    _userCommunication.GetAllPart();
-                }
-                else if (userChoose == "i" || userChoose == "I")
-                {
-                    _userCommunication.GetPartById();
-                }
-                else
-                {
-                    Console.WriteLine("Wrong char, please try again");
-                    continue;
-                }
+                var cars = _csvReader.CarProcess("Resources\\Files\\fuel.csv");
+                var manufacturers = _csvReader.ManufacturerProcess("Resources\\Files\\manufacturers.csv");
+
+                var carsNeeded = cars.Join(manufacturers,
+                    c => c.Manufacturer,
+                    m => m.Name,
+                    (car, manufacture) => new
+                    {
+                        NameGroupOfCars = manufacture.Name,
+                        Country = manufacture.Country,
+                        ModelOfCar = car.Name,
+                        Combined = car.Combined,
+                    });
+
+                var carsGrouped = carsNeeded.GroupBy(x => x.NameGroupOfCars)
+                    .Select(g => new
+                    {
+                        Name = g.Key,
+                        Sum = g.Sum(c => c.Combined),
+                        Country = g.First().Country,
+                        ModelOfCar = g.Select(c => new { c.ModelOfCar, c.Combined}),
+                    });
+
+                var document = new XDocument();
+
+                var records = new XElement("Manufacturers", carsGrouped
+                    .Select(x =>
+                        new XElement("Manufacture",
+                            new XAttribute("Name", x.Name),
+                            new XAttribute("Country", x.Country),
+                            new XElement("Cars",
+                                new XAttribute("country", x.Country),
+                                new XAttribute("CombinedSum", x.Sum),
+                                x.ModelOfCar.Select(m=>
+                                new XElement("Car",
+                                    new XAttribute("Model", m.ModelOfCar),
+                                    new XAttribute("Combined", m.Combined)
+                                    )
+                                ))
+                            )
+                    ));
+                document.Add( records );
+                document.Save("raport.xml");
             }
+
+            CreateXMLWithStencil();
+
+
+
+
+            //var repo = new ListRepository<CarParts>();
+            //repo.ItemAdded += CarPartRepositoryOnItemAdded;
+            //repo.ItemRemoved += CarPartRepositoryOnItemRemoved;
+
+            //    while (true)
+            //    {
+            //        Console.Write(_userCommunication.BeginProgram());
+            //        var userChoose = _userCommunication.UserChoose();
+            //        if (userChoose == "q" || userChoose == "Q")
+            //        {
+            //            break;
+            //        }
+            //        else if (userChoose == "a" || userChoose == "A")
+            //        {
+            //            var carPart = _userCommunication.AddNewCarPart();
+            //            _carPartsRepository.Add(carPart);
+            //            repo.Add(carPart);
+            //        }
+            //        else if (userChoose == "r" || userChoose == "R")
+            //        {
+            //            var carPart = _userCommunication.RemovePartId();
+            //            _carPartsRepository.Remove(carPart);
+            //            repo.Remove(carPart);
+            //        }
+            //        else if (userChoose == "s" || userChoose == "S")
+            //        {
+            //            _userCommunication.GetAllPart();
+            //        }
+            //        else if (userChoose == "i" || userChoose == "I")
+            //        {
+            //            _userCommunication.GetPartById();
+            //        }
+            //        else
+            //        {
+            //            Console.WriteLine("Wrong char, please try again");
+            //            continue;
+            //        }
+            //    }
         }
 
-        //public static List<CarParts> GenerateSamplesCarParts()
-        //{
-        //    return new List<CarParts>
-        //    {
-        //        new CarParts 
-        //        {
-        //            Id = 1,
-        //            NameOfPart = "Part1",
-        //            IsUsed = "new",
-        //            ModelOfCar = "Car 1",
-        //            Price = 340.21M
-        //        },
-        //        new CarParts
-        //        {
-        //            Id = 10,
-        //            NameOfPart = "Part2",
-        //            IsUsed = "new",
-        //            ModelOfCar = "Car 2",
-        //            Price = 142.53M
-        //        },
-        //        new CarParts
-        //        {
-        //            Id = 2,
-        //            NameOfPart = "Part3",
-        //            IsUsed = "used",
-        //            ModelOfCar = "Car 1",
-        //            Price = 15.81M
-        //        },
-        //        new CarParts
-        //        {
-        //            Id = 14,
-        //            NameOfPart = "Part1",
-        //            IsUsed = "used",
-        //            ModelOfCar = "Car 2",
-        //            Price = 152.74M
-        //        },
-        //        new CarParts
-        //        {
-        //            Id = 4,
-        //            NameOfPart = "Part4",
-        //            IsUsed = "new",
-        //            ModelOfCar = "Car 3",
-        //            Price = 1236.54M
-        //        },
-        //        new CarParts
-        //        {
-        //            Id = 21,
-        //            NameOfPart = "Part5",
-        //            IsUsed = "new",
-        //            ModelOfCar = "Car 4",
-        //            Price = 456.18M
-        //        },
-        //        new CarParts
-        //        {
-        //            Id = 22,
-        //            NameOfPart = "Part6",
-        //            IsUsed = "new",
-        //            ModelOfCar = "Car 5",
-        //            Price = 198.17M
-        //        },
-        //        new CarParts
-        //        {
-        //            Id = 25,
-        //            NameOfPart = "Part7",
-        //            IsUsed = "used",
-        //            ModelOfCar = "Car 4",
-        //            Price = 357.86M
-        //        },
-        //        new CarParts
-        //        {
-        //            Id = 32,
-        //            NameOfPart = "Part8",
-        //            IsUsed = "new",
-        //            ModelOfCar = "Car 4",
-        //            Price = 1357.86M
-        //        },
-        //        new CarParts
-        //        {
-        //            Id = 36,
-        //            NameOfPart = "Part8",
-        //            IsUsed = "new",
-        //            ModelOfCar = "Car 5",
-        //            Price = 1627.86M
-        //        },
-        //        new CarParts
-        //        {
-        //            Id = 37,
-        //            NameOfPart = "Part8",
-        //            IsUsed = "used",
-        //            ModelOfCar = "Car 2",
-        //            Price = 845.69M
-        //        },
-        //        new CarParts
-        //        {
-        //            Id = 42,
-        //            NameOfPart = "Part9",
-        //            IsUsed = "new",
-        //            ModelOfCar = "Car 1",
-        //            Price = 98.15M
-        //        },
-        //        new CarParts
-        //        {
-        //            Id = 44,
-        //            NameOfPart = "Part9",
-        //            IsUsed = "new",
-        //            ModelOfCar = "Car 3",
-        //            Price = 59.15M
-        //        },
-        //        new CarParts
-        //        {
-        //            Id = 7,
-        //            NameOfPart = "Part10",
-        //            IsUsed = "used",
-        //            ModelOfCar = "Car 6",
-        //            Price = 485.16M
-        //        }
-        //    };
-        //}
+        public static void CarPartRepositoryOnItemAdded(object sender, CarParts e)
+        {
+            Console.WriteLine($"Car Parts added: {e.NameOfPart}, from {sender.GetType().Name}");
+        }
+
+        public static void CarPartRepositoryOnItemRemoved(object sender, CarParts e)
+        {
+            Console.WriteLine($"Car Parts removed: {e.NameOfPart}, from {sender.GetType().Name}");
+        }
     }
 }

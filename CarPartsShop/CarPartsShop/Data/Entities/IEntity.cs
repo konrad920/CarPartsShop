@@ -1,4 +1,4 @@
-﻿namespace CarPartsShop.Entities
+﻿namespace CarPartsShop.Data.Entities
 {
     public interface IEntity
     {

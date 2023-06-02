@@ -1,12 +1,12 @@
-﻿using CarPartsShop.Entities;
-using CarPartsShop.Repositories;
+﻿using CarPartsShop.Data.Entities;
+using CarPartsShop.Data.Repositories;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CarPartsShop.UserCommunication
+namespace CarPartsShop.Components.UserCommunication
 {
     public class UserCommunication : IUserCommunication
     {
@@ -15,22 +15,6 @@ namespace CarPartsShop.UserCommunication
         public UserCommunication(IRepository<CarParts> carPartsRepository)
         {
             _carPartsRepository = carPartsRepository;
-        }
-
-        public static void CarPartRepositoryOnItemAdded(object sender, CarParts e)
-        {
-            Console.WriteLine($"Car Parts added: {e.NameOfPart}, from {sender.GetType().Name}");
-        }
-
-        public static void CarPartRepositoryOnItemRemoved(object sender, CarParts e)
-        {
-            Console.WriteLine($"Car Parts removed: {e.NameOfPart}, from {sender.GetType().Name}");
-        }
-
-        private void cos()
-        {
-            var item = new ListRepository<CarParts>();
-            item.ItemAdded += CarPartRepositoryOnItemAdded;
         }
 
         public string BeginProgram()
@@ -53,7 +37,7 @@ namespace CarPartsShop.UserCommunication
             return userChoose;
         }
 
-        public void AddNewCarPart()
+        public CarParts AddNewCarPart()
         {
             var carPart = new CarParts();
             Console.Write("Name of CarPart: ");
@@ -63,16 +47,23 @@ namespace CarPartsShop.UserCommunication
             Console.Write("Is used or new: ");
             var isUsed = Console.ReadLine();
             Console.Write("Price for this part: ");
-            var price = decimal.Parse(Console.ReadLine());
-
-            carPart.Price = price;
+            var price = Console.ReadLine();
+            if (decimal.TryParse(price, out var result))
+            {
+                carPart.Price = result;
+            }
+            else
+            {
+                Console.WriteLine("Wrong format of data");
+            }
             carPart.NameOfPart = nameOfCarPart;
             carPart.ModelOfCar = nameOfCarModel;
             carPart.IsUsed = isUsed;
-            _carPartsRepository.Add(carPart);
+            return carPart;
+            //_carPartsRepository.Add(carPart);
         }
 
-            public void RemovePartId()
+        public CarParts RemovePartId()
         {
             Console.Write("You want remove part at Id: ");
             var IdToRemove = Console.ReadLine();
@@ -81,16 +72,19 @@ namespace CarPartsShop.UserCommunication
                 var itemToRemove = _carPartsRepository.GetById(result);
                 if (itemToRemove != null)
                 {
-                    _carPartsRepository.Remove(itemToRemove);
+                    return itemToRemove;
+                    //_carPartsRepository.Remove(itemToRemove);
                 }
                 else
                 {
                     Console.WriteLine("Id is not exist");
+                    return null;
                 }
             }
             else
             {
                 Console.WriteLine("This Id is not integer!");
+                return null;
             }
         }
 

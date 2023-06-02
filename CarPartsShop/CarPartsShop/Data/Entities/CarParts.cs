@@ -1,6 +1,6 @@
 ﻿using System.Text;
 
-namespace CarPartsShop.Entities
+namespace CarPartsShop.Data.Entities
 {
     public class CarParts : EntityBase
     {
@@ -18,24 +18,22 @@ namespace CarPartsShop.Entities
 
         public int? TotalSales { get; set; }
 
-        #region ToString Override
         public override string ToString()
         {
             StringBuilder sb = new(1024);
-            sb.AppendLine($"Name of part: {NameOfPart}, part is {IsUsed}");
-            sb.AppendLine($"Price for the part: {Price:c}");
+            sb.AppendLine($"Id of part: {this.Id}, Name of part: {NameOfPart}");
+            sb.AppendLine($"Part is {IsUsed}, price for the part: {Price:c}");
             sb.AppendLine($"The part is matched to car: {ModelOfCar}");
-            if ( NameLenght != null )
+            if (NameLenght != null)
             {
                 sb.AppendLine($"NameLenght: {NameLenght}");
             }
-            if ( TotalSales != null )
+            if (TotalSales != null)
             {
                 sb.AppendLine($"Total sales: {TotalSales:c}");
             }
 
             return sb.ToString();
         }
-        #endregion
     }
 }

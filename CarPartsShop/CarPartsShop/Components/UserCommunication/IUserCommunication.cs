@@ -1,11 +1,11 @@
-﻿using CarPartsShop.Entities;
+﻿using CarPartsShop.Data.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CarPartsShop.UserCommunication
+namespace CarPartsShop.Components.UserCommunication
 {
     public interface IUserCommunication
     {
@@ -13,9 +13,9 @@ namespace CarPartsShop.UserCommunication
 
         string UserChoose();
 
-        void AddNewCarPart();
+        CarParts AddNewCarPart();
 
-        void RemovePartId();
+        CarParts RemovePartId();
 
         void GetPartById();
 

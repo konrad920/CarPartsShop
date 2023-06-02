@@ -1,6 +1,6 @@
 ﻿using System.Text.Json;
 
-namespace CarPartsShop.Entities.Extensions
+namespace CarPartsShop.Data.Entities.Extensions
 {
     public static class EntityExtension
     {

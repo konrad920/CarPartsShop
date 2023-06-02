@@ -1,6 +1,6 @@
-﻿using CarPartsShop.Entities;
+﻿using CarPartsShop.Data.Entities;
 
-namespace CarPartsShop.DataProvider
+namespace CarPartsShop.Components.DataProvider
 {
     public interface ICarPartsProvider
     {
