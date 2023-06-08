@@ -14,26 +14,20 @@ namespace CarPartsShop.Data.Entities
 
         //calculating properties
 
-        public string? NameLenght { get; set; }
-
         public int? TotalSales { get; set; }
 
-        public override string ToString()
-        {
-            StringBuilder sb = new(1024);
-            sb.AppendLine($"Id of part: {this.Id}, Name of part: {NameOfPart}");
-            sb.AppendLine($"Part is {IsUsed}, price for the part: {Price:c}");
-            sb.AppendLine($"The part is matched to car: {ModelOfCar}");
-            if (NameLenght != null)
-            {
-                sb.AppendLine($"NameLenght: {NameLenght}");
-            }
-            if (TotalSales != null)
-            {
-                sb.AppendLine($"Total sales: {TotalSales:c}");
-            }
+        //public override string ToString()
+        //{
+        //    StringBuilder sb = new(1024);
+        //    sb.AppendLine($"Id of part: {this.Id}, Name of part: {NameOfPart}");
+        //    sb.AppendLine($"Part is {IsUsed}, price for the part: {Price:c}");
+        //    sb.AppendLine($"The part is matched to car: {ModelOfCar}");
+        //    if (TotalSales != null)
+        //    {
+        //        sb.AppendLine($"Total sales: {TotalSales:c}");
+        //    }
 
-            return sb.ToString();
-        }
+        //    return sb.ToString();
+        //}
     }
 }

@@ -22,6 +22,6 @@ namespace CarPartsShop.Data
         {
         }
 
-        public DbSet<Car> CarParts { get; set; }
+        public DbSet<CarParts> CarParts { get; set; }
     }
 }

@@ -4,6 +4,7 @@ using CarPartsShop.Data;
 using CarPartsShop.Data.Entities;
 using CarPartsShop.Data.Repositories;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -44,20 +45,35 @@ namespace CarPartsShop
         }
         public void Run()
         {
+            _carPartsRepository.Add(new CarParts
+            {
+                Id = 1,
+                NameOfPart = "Kierownica",
+                IsUsed = "New",
+                ModelOfCar = "Audi",
+                Price = 672,
+                TotalSales = 23
+            });
+            _carPartsRepository.Save();
+
+
+
+
+
             //InsertData();
             //ReadData();
             //ReadGroupedCarFromDB();
 
             //edycja danych w bazie danych
-            var cayman = this.ReadFirst("Cayman");
-            cayman.Name = "nowySamochod";
-            _carPartsDBContext.SaveChanges();
+            //var cayman = this.ReadFirst("Cayman");
+            //cayman.Name = "nowySamochod";
+            //_carPartsDBContext.SaveChanges();
 
 
             //usuwanie z bazy danych
-            var carToRemove = this.ReadFirst("nowySamochod");
-            _carPartsDBContext.CarParts.Remove(carToRemove);
-            _carPartsDBContext.SaveChanges();
+            //var carToRemove = this.ReadFirst("nowySamochod");
+            //_carPartsDBContext.CarParts.Remove(carToRemove);
+            //_carPartsDBContext.SaveChanges();
 
             //var repo = new ListRepository<CarParts>();
             //repo.ItemAdded += CarPartRepositoryOnItemAdded;
@@ -98,62 +114,62 @@ namespace CarPartsShop
             //    }
             //}
         }
-        private Car? ReadFirst(string name)
-        {
-            return _carPartsDBContext.CarParts.FirstOrDefault(x => x.Name == name);
-        }
-        private void InsertData()
-        {
-            var cars = _csvReader.CarProcess("Resources\\Files\\fuel.csv");
-            foreach (var car in cars)
-            {
-                _carPartsDBContext.CarParts.Add(new Car
-                {
-                    Year = car.Year,
-                    Manufacturer = car.Manufacturer,
-                    Name = car.Name,
-                    Displacement = car.Displacement,
-                    Cylinders = car.Cylinders,
-                    City = car.City,
-                    Highway = car.Highway,
-                    Combined = car.Combined
-                });
-            }
+        //private Car? ReadFirst(string name)
+        //{
+        //    return _carPartsDBContext.CarParts.FirstOrDefault(x => x.Name == name);
+        //}
+        //private void InsertData()
+        //{
+        //    var cars = _csvReader.CarProcess("Resources\\Files\\fuel.csv");
+        //    foreach (var car in cars)
+        //    {
+        //        _carPartsDBContext.CarParts.Add(new Car
+        //        {
+        //            Year = car.Year,
+        //            Manufacturer = car.Manufacturer,
+        //            Name = car.Name,
+        //            Displacement = car.Displacement,
+        //            Cylinders = car.Cylinders,
+        //            City = car.City,
+        //            Highway = car.Highway,
+        //            Combined = car.Combined
+        //        });
+        //    }
 
-            _carPartsDBContext.SaveChanges();
-        }
+        //    _carPartsDBContext.SaveChanges();
+        //}
 
-        private void ReadData()
-        {
-            var carPartsFromDB = _carPartsDBContext.CarParts.ToList();
+        //private void ReadData()
+        //{
+        //    var carPartsFromDB = _carPartsDBContext.CarParts.ToList();
 
-            foreach (var carPart in carPartsFromDB)
-            {
-                Console.WriteLine($"\t{carPart.Name}, {carPart.Combined}");
-            }
-        }
+        //    foreach (var carPart in carPartsFromDB)
+        //    {
+        //        Console.WriteLine($"\t{carPart.Name}, {carPart.Combined}");
+        //    }
+        //}
 
-        private void ReadGroupedCarFromDB()
-        {
-            var groups = _carPartsDBContext.CarParts
-                .GroupBy(x => x.Manufacturer)
-                .Select(x => new
-                {
-                    Name = x.Key,
-                    Car = x.ToList()
-                })
-                .ToList();
+        //private void ReadGroupedCarFromDB()
+        //{
+        //    var groups = _carPartsDBContext.CarParts
+        //        .GroupBy(x => x.Manufacturer)
+        //        .Select(x => new
+        //        {
+        //            Name = x.Key,
+        //            Car = x.ToList()
+        //        })
+        //        .ToList();
 
-            foreach(var car in groups)
-            {
-                Console.WriteLine($"Name: {car.Name}");
-                Console.WriteLine("=========");
-                foreach(var item in car.Car)
-                {
-                    Console.WriteLine($"\tName:{item.Name}, Combined: {item.Combined}");
-                }
-            }
-        }
+        //    foreach(var car in groups)
+        //    {
+        //        Console.WriteLine($"Name: {car.Name}");
+        //        Console.WriteLine("=========");
+        //        foreach(var item in car.Car)
+        //        {
+        //            Console.WriteLine($"\tName:{item.Name}, Combined: {item.Combined}");
+        //        }
+        //    }
+        //}
 
         //public static void CarPartRepositoryOnItemAdded(object sender, CarParts e)
         //{

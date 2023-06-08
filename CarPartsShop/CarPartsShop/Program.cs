@@ -13,10 +13,10 @@ using Microsoft.Extensions.DependencyInjection;
 var services = new ServiceCollection();
 services.AddSingleton<IApp, App>();
 services.AddSingleton<IRepository<Employee>, ListRepository<Employee>>();
-services.AddSingleton<IRepository<CarParts>, ListRepository<CarParts>>();
+services.AddSingleton<IRepository<CarParts>, MSQLRepository<CarParts>>();
 services.AddSingleton<IUserCommunication, UserCommunication>();
 services.AddSingleton<ICsvReader, CsvReader>();
-services.AddDbContext<CarPartsDBContext>(options => options.UseSqlServer("Data Source=LAPTOP-QIGQKKJP\\SQLEXPRESS01;Initial Catalog=CarPartsStorage;Integrated Security=True;Connect Timeout=30;Encrypt=False;Trust Server Certificate=False;Application Intent=ReadWrite;Multi Subnet Failover=False"));
+services.AddDbContext<CarPartsDBContext>(options => options.UseSqlServer("Data Source=LAPTOP-QIGQKKJP\\SQLEXPRESS01;Integrated Security=True;Connect Timeout=30;Encrypt=False;Trust Server Certificate=False;Application Intent=ReadWrite;Multi Subnet Failover=False"));
 
 var serviceProvider = services.BuildServiceProvider();
 var app = serviceProvider.GetService<IApp>()!;
