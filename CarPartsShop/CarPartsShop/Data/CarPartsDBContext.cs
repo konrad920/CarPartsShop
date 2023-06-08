@@ -4,18 +4,24 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CarPartsShop.Data
 {
-    internal class CarPartsDBContext : DbContext
+    public class CarPartsDBContext : DbContext
     {
-        public DbSet<CarParts> CarParts =>  Set<CarParts>();
+        //public DbSet<CarParts> CarParts =>  Set<CarParts>();
 
-        public DbSet<MotoParts> MotorParts => Set<MotoParts>();
+        //public DbSet<MotoParts> MotorParts => Set<MotoParts>();
 
-        public DbSet<LorriesParts> LorriesParts => Set<LorriesParts>();
+        //public DbSet<LorriesParts> LorriesParts => Set<LorriesParts>();
 
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        //protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        //{
+        //    base.OnConfiguring(optionsBuilder);
+        //    optionsBuilder.UseInMemoryDatabase("StorageApp");
+        //}
+        public CarPartsDBContext(DbContextOptions<CarPartsDBContext> options)
+            : base(options)
         {
-            base.OnConfiguring(optionsBuilder);
-            optionsBuilder.UseInMemoryDatabase("StorageApp");
         }
+
+        public DbSet<Car> CarParts { get; set; }
     }
 }

@@ -4,8 +4,10 @@ using CarPartsShop;
 using CarPartsShop.Components.CsvReader;
 using CarPartsShop.Components.DataProvider;
 using CarPartsShop.Components.UserCommunication;
+using CarPartsShop.Data;
 using CarPartsShop.Data.Entities;
 using CarPartsShop.Data.Repositories;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
 var services = new ServiceCollection();
@@ -13,8 +15,8 @@ services.AddSingleton<IApp, App>();
 services.AddSingleton<IRepository<Employee>, ListRepository<Employee>>();
 services.AddSingleton<IRepository<CarParts>, ListRepository<CarParts>>();
 services.AddSingleton<IUserCommunication, UserCommunication>();
-services.AddSingleton<ICarPartsProvider, CarPartsProvider>();
 services.AddSingleton<ICsvReader, CsvReader>();
+services.AddDbContext<CarPartsDBContext>(options => options.UseSqlServer("Data Source=LAPTOP-QIGQKKJP\\SQLEXPRESS01;Initial Catalog=CarPartsStorage;Integrated Security=True;Connect Timeout=30;Encrypt=False;Trust Server Certificate=False;Application Intent=ReadWrite;Multi Subnet Failover=False"));
 
 var serviceProvider = services.BuildServiceProvider();
 var app = serviceProvider.GetService<IApp>()!;
