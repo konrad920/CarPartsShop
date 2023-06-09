@@ -4,20 +4,13 @@ using System.Reflection.PortableExecutable;
 
 namespace CarPartsShop.Data.Repositories
 {
-    //public delegate void ItemAdded<in T>(T item);
-    public class SQLPartsRepository<T> : IRepository<T>
+    public class FilePartsRepository<T> : IRepository<T>
         where T : class, IEntity, new()
     {
-        private readonly DbContext _dbContext;
-        private readonly DbSet<T> _carParts;
         private string fileName = "CarParts.txt";
-        //private readonly Action<T>? _itemAddedCallBack;
 
-        public SQLPartsRepository(DbContext dbContext)
+        public FilePartsRepository(DbContext dbContext)
         {
-            _dbContext = dbContext;
-            _carParts = _dbContext.Set<T>();
-            //_itemAddedCallBack = itemAddedCallBack;
         }
 
         public event EventHandler<T>? ItemAdded;
@@ -27,12 +20,9 @@ namespace CarPartsShop.Data.Repositories
         public event EventHandler<T>? FileSavedAdded;
 
         public event EventHandler<T>? FileSavedRemoved;
-        public IEnumerable<T> GetAll()
-        {
-            return _carParts.ToList();
-        }
 
-        public Dictionary<int, string> GetAll1()
+
+        public Dictionary<int, string> GetAll()
         {
             if (File.Exists(fileName))
             {
@@ -56,11 +46,11 @@ namespace CarPartsShop.Data.Repositories
             }
         }
 
-        public string GetById1(int id)
+        public string GetById(int id)
         {
             if (File.Exists(fileName))
             {
-                var carParts = GetAll1();
+                var carParts = GetAll();
                 var carPart = carParts[id];
                 return carPart;
             }
@@ -69,29 +59,23 @@ namespace CarPartsShop.Data.Repositories
                 throw new Exception("File does not exist");
             }
         }
-        public T? GetById(int id)
-        {
-            return _carParts.Find(id);
-        }
 
         public void Add(T item)
         {
-            _carParts.Add(item);
             using (var writer = File.AppendText(fileName))
             {
                 writer.WriteLine(item);
             }
-            //_itemAddedCallBack?.Invoke(item);
             ItemAdded?.Invoke(this, item);
             FileSavedAdded?.Invoke(this, item);
         }
 
 
-        public void Remove1(T item)
+        public void Remove(T item)
         {
             if (File.Exists(fileName))
             {
-                var carParts = GetAll1();
+                var carParts = GetAll();
                 carParts.Remove(item.Id);
                 File.Delete(fileName);
                 using (var writer = File.AppendText(fileName))
@@ -109,16 +93,20 @@ namespace CarPartsShop.Data.Repositories
                 throw new Exception("File does not exist");
             }
         }
-        public void Remove(T item)
+
+        IEnumerable<T> IReadRepository<T>.GetAll()
         {
-            _carParts.Remove(item);
-            ItemRemoved?.Invoke(this, item);
-            FileSavedRemoved?.Invoke(this, item);
+            throw new NotImplementedException();
+        }
+
+        T? IReadRepository<T>.GetById(int id)
+        {
+            throw new NotImplementedException();
         }
 
         public void Save()
         {
-            _dbContext.SaveChanges();
+            throw new NotImplementedException();
         }
     }
 }

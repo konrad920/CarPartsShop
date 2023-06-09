@@ -1,5 +1,6 @@
 ﻿using CarPartsShop.Components.CsvReader.Extensions;
 using CarPartsShop.Components.CsvReader.Models;
+using CarPartsShop.Data.Entities;
 
 namespace CarPartsShop.Components.CsvReader
 {
@@ -42,6 +43,33 @@ namespace CarPartsShop.Components.CsvReader
                 .ToList();
 
             return manufacturers;
+        }
+
+        public List<CarParts> CarPartsProcess(string filePath)
+        {
+            if (!File.Exists(filePath))
+            {
+                return new List<CarParts>();
+            }
+
+            var carParts = File.ReadAllLines(filePath)
+                .Where(x => x.Length > 0)
+                .Select(x =>
+                {
+                    var columns = x.Split(',');
+                    return new CarParts
+                    {
+                        Id = int.Parse(columns[0]),
+                        NameOfPart = columns[1],
+                        IsUsed = columns[2],
+                        Price = decimal.Parse(columns[3]),
+                        ModelOfCar = columns[5],
+                        Sales = int.Parse(columns[6])
+                    };
+                })
+                .ToList();
+
+            return carParts;
         }
     }
 }

@@ -20,6 +20,8 @@ namespace CarPartsShop
 {
     public class App : IApp
     {
+        private readonly string fileName = "StorageFromDB.csv";
+
         private readonly IRepository<Employee> _employeeRepository;
 
         private readonly IRepository<CarParts> _carPartsRepository;
@@ -45,21 +47,6 @@ namespace CarPartsShop
         }
         public void Run()
         {
-            _carPartsRepository.Add(new CarParts
-            {
-                Id = 1,
-                NameOfPart = "Kierownica",
-                IsUsed = "New",
-                ModelOfCar = "Audi",
-                Price = 672,
-                TotalSales = 23
-            });
-            _carPartsRepository.Save();
-
-
-
-
-
             //InsertData();
             //ReadData();
             //ReadGroupedCarFromDB();
@@ -75,79 +62,86 @@ namespace CarPartsShop
             //_carPartsDBContext.CarParts.Remove(carToRemove);
             //_carPartsDBContext.SaveChanges();
 
-            //var repo = new ListRepository<CarParts>();
-            //repo.ItemAdded += CarPartRepositoryOnItemAdded;
-            //repo.ItemRemoved += CarPartRepositoryOnItemRemoved;
+            var repo = new ListRepository<CarParts>();
+            repo.ItemAdded += CarPartRepositoryOnItemAdded;
+            repo.ItemRemoved += CarPartRepositoryOnItemRemoved;
 
-            //while (true)
-            //{
-            //    Console.Write(_userCommunication.BeginProgram());
-            //    var userChoose = _userCommunication.UserChoose();
-            //    if (userChoose == "q" || userChoose == "Q")
-            //    {
-            //        break;
-            //    }
-            //    else if (userChoose == "a" || userChoose == "A")
-            //    {
-            //        var carPart = _userCommunication.AddNewCarPart();
-            //        _carPartsRepository.Add(carPart);
-            //        repo.Add(carPart);
-            //    }
-            //    else if (userChoose == "r" || userChoose == "R")
-            //    {
-            //        var carPart = _userCommunication.RemovePartId();
-            //        _carPartsRepository.Remove(carPart);
-            //        repo.Remove(carPart);
-            //    }
-            //    else if (userChoose == "s" || userChoose == "S")
-            //    {
-            //        _userCommunication.GetAllPart();
-            //    }
-            //    else if (userChoose == "i" || userChoose == "I")
-            //    {
-            //        _userCommunication.GetPartById();
-            //    }
-            //    else
-            //    {
-            //        Console.WriteLine("Wrong char, please try again");
-            //        continue;
-            //    }
-            //}
+            while (true)
+            {
+                Console.Write(_userCommunication.BeginProgram());
+                var userChoose = _userCommunication.UserChoose();
+                if (userChoose == "q" || userChoose == "Q")
+                {
+                    break;
+                }
+                else if (userChoose == "a" || userChoose == "A")
+                {
+                    var carPart = _userCommunication.AddNewCarPart();
+                    _carPartsRepository.Add(carPart);
+                    _carPartsRepository.Save();
+                    repo.Add(carPart);
+                }
+                else if (userChoose == "r" || userChoose == "R")
+                {
+                    var carPart = _userCommunication.RemovePartId();
+                    _carPartsRepository.Remove(carPart);
+                    _carPartsRepository.Save();
+                    repo.Remove(carPart);
+                }
+                else if (userChoose == "s" || userChoose == "S")
+                {
+                    _userCommunication.GetAllPart();
+                }
+                else if (userChoose == "i" || userChoose == "I")
+                {
+                    _userCommunication.ShowPartById();
+                }
+                else if (userChoose =="e" || userChoose == "E")
+                {
+                    var carPart = _userCommunication.GetPartByIDToEdit();
+                    _userCommunication.EditPart(carPart);
+                    _carPartsRepository.Save();
+                }
+                else if (userChoose == "c" || userChoose == "C")
+                {
+                    var carPartsFromDB = _carPartsDBContext.CarParts.ToList();
+                    using (var writer = File.AppendText(fileName))
+                    {
+                        foreach (var carPart in carPartsFromDB)
+                        {
+                            writer.WriteLine($"{carPart.Id}, {carPart.NameOfPart}, {carPart.IsUsed}, {carPart.Price}, {carPart.ModelOfCar}, {carPart.Sales}");
+                        }
+                    }
+                }
+                else if (userChoose == "in" || userChoose == "In")
+                {
+                    var carParts = _csvReader.CarPartsProcess(fileName);
+                    foreach (var carPart in carParts)
+                    {
+                        _carPartsDBContext.CarParts.Add(new CarParts
+                        {
+                            NameOfPart = carPart.NameOfPart,
+                            IsUsed = carPart.IsUsed,
+                            Price = carPart.Price,
+                            ModelOfCar = carPart.ModelOfCar,
+                            Sales = carPart.Sales
+                        });
+                    }
+
+                    _carPartsDBContext.SaveChanges();
+                }
+                else
+                {
+                    Console.WriteLine("Wrong char, please try again");
+                    continue;
+                }
+            }
         }
-        //private Car? ReadFirst(string name)
-        //{
-        //    return _carPartsDBContext.CarParts.FirstOrDefault(x => x.Name == name);
-        //}
-        //private void InsertData()
-        //{
-        //    var cars = _csvReader.CarProcess("Resources\\Files\\fuel.csv");
-        //    foreach (var car in cars)
-        //    {
-        //        _carPartsDBContext.CarParts.Add(new Car
-        //        {
-        //            Year = car.Year,
-        //            Manufacturer = car.Manufacturer,
-        //            Name = car.Name,
-        //            Displacement = car.Displacement,
-        //            Cylinders = car.Cylinders,
-        //            City = car.City,
-        //            Highway = car.Highway,
-        //            Combined = car.Combined
-        //        });
-        //    }
+        private CarParts? ReadFirst(string name)
+        {
+            return _carPartsDBContext.CarParts.FirstOrDefault(x => x.NameOfPart == name);
+        }
 
-        //    _carPartsDBContext.SaveChanges();
-        //}
-
-        //private void ReadData()
-        //{
-        //    var carPartsFromDB = _carPartsDBContext.CarParts.ToList();
-
-        //    foreach (var carPart in carPartsFromDB)
-        //    {
-        //        Console.WriteLine($"\t{carPart.Name}, {carPart.Combined}");
-        //    }
-        //}
 
         //private void ReadGroupedCarFromDB()
         //{
@@ -171,14 +165,14 @@ namespace CarPartsShop
         //    }
         //}
 
-        //public static void CarPartRepositoryOnItemAdded(object sender, CarParts e)
-        //{
-        //    Console.WriteLine($"Car Parts added: {e.NameOfPart}, from {sender.GetType().Name}");
-        //}
+        public static void CarPartRepositoryOnItemAdded(object sender, CarParts e)
+        {
+            Console.WriteLine($"Car Parts added: {e.NameOfPart}, from {sender.GetType().Name}");
+        }
 
-        //public static void CarPartRepositoryOnItemRemoved(object sender, CarParts e)
-        //{
-        //    Console.WriteLine($"Car Parts removed: {e.NameOfPart}, from {sender.GetType().Name}");
-        //}
+        public static void CarPartRepositoryOnItemRemoved(object sender, CarParts e)
+        {
+            Console.WriteLine($"Car Parts removed: {e.NameOfPart}, from {sender.GetType().Name}");
+        }
     }
 }

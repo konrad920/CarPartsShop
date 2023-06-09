@@ -25,6 +25,9 @@ namespace CarPartsShop.Components.UserCommunication
             sb.AppendLine("(R) - Remove the exist part");
             sb.AppendLine("(S) - Show all of parts");
             sb.AppendLine("(I) - Show part by Id");
+            sb.AppendLine("(E) - Edit part by Id");
+            sb.AppendLine("(C) - Create new file from DB");
+            sb.AppendLine("(In) - Insert data from file to DB");
             sb.Append("Select what do you want: ");
 
             return sb.ToString();
@@ -56,11 +59,20 @@ namespace CarPartsShop.Components.UserCommunication
             {
                 Console.WriteLine("Wrong format of data");
             }
+            Console.Write("Sales of this part: ");
+            var sales = Console.ReadLine();
+            if (int.TryParse(sales, out var result1))
+            {
+                carPart.Sales = result1;
+            }
+            else
+            {
+                Console.WriteLine("Wrong format of data");
+            }
             carPart.NameOfPart = nameOfCarPart;
             carPart.ModelOfCar = nameOfCarModel;
             carPart.IsUsed = isUsed;
             return carPart;
-            //_carPartsRepository.Add(carPart);
         }
 
         public CarParts RemovePartId()
@@ -73,7 +85,6 @@ namespace CarPartsShop.Components.UserCommunication
                 if (itemToRemove != null)
                 {
                     return itemToRemove;
-                    //_carPartsRepository.Remove(itemToRemove);
                 }
                 else
                 {
@@ -88,7 +99,87 @@ namespace CarPartsShop.Components.UserCommunication
             }
         }
 
-        public void GetPartById()
+        public CarParts GetPartByIDToEdit()
+        {
+            Console.Write("You want edit part at Id: ");
+            var IdToEdit = Console.ReadLine();
+            if (int.TryParse(IdToEdit, out var result))
+            {
+                var itemToEdit = _carPartsRepository.GetById(result);
+                if (itemToEdit != null)
+                {
+                    return itemToEdit;
+                }
+                else
+                {
+                    Console.WriteLine("Id is not exist");
+                    return null;
+                }
+            }
+            else
+            {
+                Console.WriteLine("This Id is not integer!");
+                return null;
+            }
+        }
+
+        public void EditPart(CarParts item)
+        {
+            Console.WriteLine("Which property you want to edit :");
+            Console.WriteLine("[N] - Name of the part");
+            Console.WriteLine("[M] - Model of the car");
+            Console.WriteLine("[S] - Sales of the part");
+            Console.WriteLine("[P] - Price of the part");
+            Console.WriteLine("[I] - Is used of the part");
+            var editChoose = Console.ReadLine();
+
+            if (editChoose == "n" || editChoose == "N")
+            {
+                Console.Write("Write new carpart name: ");
+                var editedName = Console.ReadLine();
+                item.NameOfPart = editedName;
+            }
+            else if(editChoose == "m" || editChoose == "M")
+            {
+                Console.Write("Write new car model matched with this part: ");
+                var editedModel = Console.ReadLine();
+                item.ModelOfCar = editedModel;
+            }
+            else if(editChoose == "i" || editChoose == "I")
+            {
+                Console.Write("Write new state of this part: ");
+                var editedIsUsed = Console.ReadLine();
+                item.ModelOfCar = editedIsUsed;
+            }
+            else if (editChoose == "s" || editChoose == "S")
+            {
+                Console.Write("Write new sales of this part: ");
+                var editedSales = Console.ReadLine();
+                if (int.TryParse(editedSales, out var result))
+                {
+                    item.Sales = result;
+                }
+                else
+                {
+                    Console.WriteLine("This is not integer!");
+                }
+            }
+            else if (editChoose == "p" || editChoose == "P")
+            {
+                Console.Write("Write new price of this part: ");
+                var editedPrice = Console.ReadLine();
+                if (int.TryParse(editedPrice, out var result))
+                {
+                    item.Sales = result;
+                }
+                else
+                {
+                    Console.WriteLine("This is not integer!");
+                }
+            }
+        } 
+
+        public void ShowPartById()
         {
             Console.Write("You want see part at Id: ");
             var IdToShow = Console.ReadLine();

@@ -1,4 +1,5 @@
 ﻿using CarPartsShop.Components.CsvReader.Models;
+using CarPartsShop.Data.Entities;
 
 namespace CarPartsShop.Components.CsvReader
 {
@@ -7,5 +8,7 @@ namespace CarPartsShop.Components.CsvReader
         List<Car> CarProcess(string filePath);
 
         List<Manufacturer> ManufacturerProcess(string filePath);
+
+        List<CarParts> CarPartsProcess(string filePath);
     }
 }

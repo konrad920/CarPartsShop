@@ -17,7 +17,11 @@ namespace CarPartsShop.Components.UserCommunication
 
         CarParts RemovePartId();
 
-        void GetPartById();
+        CarParts GetPartByIDToEdit();
+
+        void EditPart(CarParts item);
+
+        void ShowPartById();
 
         void GetAllPart();
     }

@@ -12,6 +12,14 @@ namespace CarPartsShop.Data.Repositories
             _carPartsDBContext = carPartsDBContext;
             _carParts = _carPartsDBContext.Set<T>();
         }
+
+        public event EventHandler<T>? ItemAdded;
+
+        public event EventHandler<T>? ItemRemoved;
+
+        public event EventHandler<T>? FileSavedAdded;
+
+        public event EventHandler<T>? FileSavedRemoved;
         public void Add(T item)
         {
             _carParts.Add(item);
