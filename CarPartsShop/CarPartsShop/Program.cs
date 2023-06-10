@@ -3,6 +3,7 @@
 using CarPartsShop;
 using CarPartsShop.Components.CsvReader;
 using CarPartsShop.Components.DataProvider;
+using CarPartsShop.Components.FileUser;
 using CarPartsShop.Components.UserCommunication;
 using CarPartsShop.Data;
 using CarPartsShop.Data.Entities;
@@ -15,6 +16,7 @@ services.AddSingleton<IApp, App>();
 services.AddSingleton<IRepository<Employee>, ListRepository<Employee>>();
 services.AddSingleton<IRepository<CarParts>, MSQLRepository<CarParts>>();
 services.AddSingleton<IUserCommunication, UserCommunication>();
+services.AddSingleton<IFileUser,  FileUser>();
 services.AddSingleton<ICsvReader, CsvReader>();
 services.AddDbContext<CarPartsDBContext>(options => options.UseSqlServer("Data Source=LAPTOP-QIGQKKJP\\SQLEXPRESS01;Initial Catalog=CarPartsStorage;Integrated Security=True;TrustServerCertificate=true"));
 

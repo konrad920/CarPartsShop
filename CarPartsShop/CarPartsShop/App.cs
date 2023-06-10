@@ -1,4 +1,5 @@
 ﻿using CarPartsShop.Components.CsvReader;
+using CarPartsShop.Components.FileUser;
 using CarPartsShop.Components.UserCommunication;
 using CarPartsShop.Data;
 using CarPartsShop.Data.Entities;
@@ -32,16 +33,20 @@ namespace CarPartsShop
 
         private readonly CarPartsDBContext _carPartsDBContext;
 
+        private readonly IFileUser _fileUser;
+
         public App(IRepository<Employee> employeeRepository,
                    IRepository<CarParts> carPartsRepository,
                    IUserCommunication userCommunication,
                    ICsvReader csvReader,
-                   CarPartsDBContext carPartsDBContext)
+                   CarPartsDBContext carPartsDBContext,
+                   IFileUser fileUser)
         {
             _employeeRepository = employeeRepository;
             _carPartsRepository = carPartsRepository;
             _userCommunication = userCommunication;
             _csvReader = csvReader;
+            _fileUser = fileUser;
             _carPartsDBContext = carPartsDBContext;
             _carPartsDBContext.Database.EnsureCreated();
         }
@@ -104,31 +109,30 @@ namespace CarPartsShop
                 }
                 else if (userChoose == "c" || userChoose == "C")
                 {
-                    var carPartsFromDB = _carPartsDBContext.CarParts.ToList();
-                    using (var writer = File.AppendText(fileName))
-                    {
-                        foreach (var carPart in carPartsFromDB)
-                        {
-                            writer.WriteLine($"{carPart.Id}, {carPart.NameOfPart}, {carPart.IsUsed}, {carPart.Price}, {carPart.ModelOfCar}, {carPart.Sales}");
-                        }
-                    }
+                    _fileUser.CreateFile(fileName);
                 }
                 else if (userChoose == "in" || userChoose == "In")
                 {
-                    var carParts = _csvReader.CarPartsProcess(fileName);
-                    foreach (var carPart in carParts)
-                    {
-                        _carPartsDBContext.CarParts.Add(new CarParts
+                    _fileUser.InsertDataFromFile(fileName);
+                }
+                else if (userChoose == "g" || userChoose == "G")
+                {
+                    var groups = _carPartsDBContext.CarParts
+                        .GroupBy(x => x.ModelOfCar)
+                        .Select(g => new
                         {
-                            NameOfPart = carPart.NameOfPart,
-                            IsUsed = carPart.IsUsed,
-                            Price = carPart.Price,
-                            ModelOfCar = carPart.ModelOfCar,
-                            Sales = carPart.Sales
-                        });
+                            Name = g.Key,
+                            CarParts = g.Select(c => new {c.Sales, c.NameOfPart, c.Price})
+                        }).ToList();
+                    foreach (var group in groups)
+                    {
+                        Console.WriteLine(group.Name);
+                        Console.WriteLine("=========");
+                        foreach (var part in group.CarParts)
+                        {
+                            Console.WriteLine($"{part.NameOfPart}, sales {part.Sales}, each cost {part.Price}");
+                        }
                     }
-
-                    _carPartsDBContext.SaveChanges();
                 }
                 else
                 {
@@ -141,29 +145,6 @@ namespace CarPartsShop
         {
             return _carPartsDBContext.CarParts.FirstOrDefault(x => x.NameOfPart == name);
         }
-
-
-        //private void ReadGroupedCarFromDB()
-        //{
-        //    var groups = _carPartsDBContext.CarParts
-        //        .GroupBy(x => x.Manufacturer)
-        //        .Select(x => new
-        //        {
-        //            Name = x.Key,
-        //            Car = x.ToList()
-        //        })
-        //        .ToList();
-
-        //    foreach(var car in groups)
-        //    {
-        //        Console.WriteLine($"Name: {car.Name}");
-        //        Console.WriteLine("=========");
-        //        foreach(var item in car.Car)
-        //        {
-        //            Console.WriteLine($"\tName:{item.Name}, Combined: {item.Combined}");
-        //        }
-        //    }
-        //}
 
         public static void CarPartRepositoryOnItemAdded(object sender, CarParts e)
         {
