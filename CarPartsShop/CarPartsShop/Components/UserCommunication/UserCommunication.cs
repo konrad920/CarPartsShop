@@ -1,4 +1,5 @@
-﻿using CarPartsShop.Data.Entities;
+﻿using CarPartsShop.Data;
+using CarPartsShop.Data.Entities;
 using CarPartsShop.Data.Repositories;
 using System;
 using System.Collections.Generic;
@@ -12,11 +13,13 @@ namespace CarPartsShop.Components.UserCommunication
     {
         private readonly IRepository<CarParts> _carPartsRepository;
 
-        public UserCommunication(IRepository<CarParts> carPartsRepository)
+        private readonly CarPartsDBContext _carPartsDBContext;
+
+        public UserCommunication(IRepository<CarParts> carPartsRepository, CarPartsDBContext carPartsDBContext)
         {
             _carPartsRepository = carPartsRepository;
+            _carPartsDBContext = carPartsDBContext;
         }
-
         public string BeginProgram()
         {
             var sb = new StringBuilder();
@@ -28,6 +31,7 @@ namespace CarPartsShop.Components.UserCommunication
             sb.AppendLine("(E) - Edit part by Id");
             sb.AppendLine("(C) - Create new file from DB");
             sb.AppendLine("(In) - Insert data from file to DB");
+            sb.AppendLine("[G] - Grouped data from DB");
             sb.Append("Select what do you want: ");
 
             return sb.ToString();
@@ -40,7 +44,7 @@ namespace CarPartsShop.Components.UserCommunication
             return userChoose;
         }
 
-        public CarParts AddNewCarPart()
+        public CarParts CreateNewCarPart()
         {
             var carPart = new CarParts();
             Console.Write("Name of CarPart: ");
@@ -75,56 +79,15 @@ namespace CarPartsShop.Components.UserCommunication
             return carPart;
         }
 
-        public CarParts RemovePartId()
+        public void RemovePart(CarParts partToRemove)
         {
-            Console.Write("You want remove part at Id: ");
-            var IdToRemove = Console.ReadLine();
-            if (int.TryParse(IdToRemove, out var result))
-            {
-                var itemToRemove = _carPartsRepository.GetById(result);
-                if (itemToRemove != null)
-                {
-                    return itemToRemove;
-                }
-                else
-                {
-                    Console.WriteLine("Id is not exist");
-                    return null;
-                }
-            }
-            else
-            {
-                Console.WriteLine("This Id is not integer!");
-                return null;
-            }
+            Console.WriteLine($"You want remove part: {partToRemove.NameOfPart}, at Id: {partToRemove.Id}");
+            _carPartsRepository.Remove(partToRemove);
         }
 
-        public CarParts GetPartByIDToEdit()
+        public void EditPart(CarParts partToEdit)
         {
-            Console.Write("You want edit part at Id: ");
-            var IdToEdit = Console.ReadLine();
-            if (int.TryParse(IdToEdit, out var result))
-            {
-                var itemToEdit = _carPartsRepository.GetById(result);
-                if (itemToEdit != null)
-                {
-                    return itemToEdit;
-                }
-                else
-                {
-                    Console.WriteLine("Id is not exist");
-                    return null;
-                }
-            }
-            else
-            {
-                Console.WriteLine("This Id is not integer!");
-                return null;
-            }
-        }
-
-        public void EditPart(CarParts item)
-        {
+            Console.Write($"You want edit part: {partToEdit.NameOfPart}, at Id: {partToEdit.Id}");
             Console.WriteLine("Which property you want to edit :");
             Console.WriteLine("[N] - Name of the part");
             Console.WriteLine("[M] - Model of the car");
@@ -137,19 +100,19 @@ namespace CarPartsShop.Components.UserCommunication
             {
                 Console.Write("Write new carpart name: ");
                 var editedName = Console.ReadLine();
-                item.NameOfPart = editedName;
+                partToEdit.NameOfPart = editedName;
             }
             else if(editChoose == "m" || editChoose == "M")
             {
                 Console.Write("Write new car model matched with this part: ");
                 var editedModel = Console.ReadLine();
-                item.ModelOfCar = editedModel;
+                partToEdit.ModelOfCar = editedModel;
             }
             else if(editChoose == "i" || editChoose == "I")
             {
                 Console.Write("Write new state of this part: ");
                 var editedIsUsed = Console.ReadLine();
-                item.ModelOfCar = editedIsUsed;
+                partToEdit.ModelOfCar = editedIsUsed;
             }
             else if (editChoose == "s" || editChoose == "S")
             {
@@ -157,7 +120,7 @@ namespace CarPartsShop.Components.UserCommunication
                 var editedSales = Console.ReadLine();
                 if (int.TryParse(editedSales, out var result))
                 {
-                    item.Sales = result;
+                    partToEdit.Sales = result;
                 }
                 else
                 {
@@ -170,7 +133,7 @@ namespace CarPartsShop.Components.UserCommunication
                 var editedPrice = Console.ReadLine();
                 if (int.TryParse(editedPrice, out var result))
                 {
-                    item.Sales = result;
+                    partToEdit.Sales = result;
                 }
                 else
                 {
@@ -178,28 +141,6 @@ namespace CarPartsShop.Components.UserCommunication
                 }
             }
         } 
-
-        public void ShowPartById()
-        {
-            Console.Write("You want see part at Id: ");
-            var IdToShow = Console.ReadLine();
-            if (int.TryParse(IdToShow, out var result))
-            {
-                var itemToShow = _carPartsRepository.GetById(result);
-                if (itemToShow != null)
-                {
-                    Console.WriteLine(itemToShow.ToString());
-                }
-                else
-                {
-                    Console.WriteLine("Id is not exist");
-                }
-            }
-            else
-            {
-                Console.WriteLine("This Id is not integer!");
-            }
-        }
 
         public void GetAllPart()
         {
@@ -214,6 +155,50 @@ namespace CarPartsShop.Components.UserCommunication
             else
             {
                 Console.WriteLine("The base is empty");
+            }
+        }
+
+        public CarParts GetPartById()
+        {
+            Console.Write("You want take part at Id: ");
+            var IdToTake = Console.ReadLine();
+            if (int.TryParse(IdToTake, out var result))
+            {
+                var itemToTake = _carPartsRepository.GetById(result);
+                if (itemToTake != null)
+                {
+                    return itemToTake;
+                }
+                else
+                {
+                    Console.WriteLine("Id is not exist");
+                    return null;
+                }
+            }
+            else
+            {
+                Console.WriteLine("This Id is not integer!");
+                return null;
+            }
+        }
+
+        public void GroupedData()
+        {
+            var groups = _carPartsDBContext.CarParts
+                        .GroupBy(x => x.ModelOfCar)
+                        .Select(g => new
+                        {
+                            Name = g.Key,
+                            CarParts = g.Select(c => new { c.Sales, c.NameOfPart, c.Price })
+                        }).ToList();
+            foreach (var group in groups)
+            {
+                Console.WriteLine(group.Name);
+                Console.WriteLine("=========");
+                foreach (var part in group.CarParts)
+                {
+                    Console.WriteLine($"{part.NameOfPart}, sales {part.Sales}, each cost {part.Price}");
+                }
             }
         }
     }

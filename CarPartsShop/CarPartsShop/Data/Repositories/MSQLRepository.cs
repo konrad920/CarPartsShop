@@ -20,9 +20,13 @@ namespace CarPartsShop.Data.Repositories
         public event EventHandler<T>? FileSavedAdded;
 
         public event EventHandler<T>? FileSavedRemoved;
+
+        public event EventHandler<T>? ItemEdited;
         public void Add(T item)
         {
             _carParts.Add(item);
+            ItemAdded?.Invoke(this, item);
+            FileSavedAdded?.Invoke(this, item);
         }
 
         public IEnumerable<T> GetAll()
@@ -38,11 +42,18 @@ namespace CarPartsShop.Data.Repositories
         public void Remove(T item)
         {
             _carParts.Remove(item);
+            ItemRemoved?.Invoke(this, item);
+            FileSavedRemoved?.Invoke(this, item);
         }
 
         public void Save()
         {
             _carPartsDBContext.SaveChanges();
+        }
+
+        public void Edit()
+        {
+
         }
     }
 }

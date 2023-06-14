@@ -13,16 +13,16 @@ namespace CarPartsShop.Components.UserCommunication
 
         string UserChoose();
 
-        CarParts AddNewCarPart();
+        CarParts CreateNewCarPart();
 
-        CarParts RemovePartId();
+        void RemovePart(CarParts partToRemove);
 
-        CarParts GetPartByIDToEdit();
+        void EditPart(CarParts partToRemove);
 
-        void EditPart(CarParts item);
-
-        void ShowPartById();
+        CarParts GetPartById();
 
         void GetAllPart();
+
+        void GroupedData();
     }
 }

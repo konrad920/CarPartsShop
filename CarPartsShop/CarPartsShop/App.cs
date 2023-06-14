@@ -1,4 +1,5 @@
 ﻿using CarPartsShop.Components.CsvReader;
+using CarPartsShop.Components.CsvReader.Models;
 using CarPartsShop.Components.FileUser;
 using CarPartsShop.Components.UserCommunication;
 using CarPartsShop.Data;
@@ -52,22 +53,7 @@ namespace CarPartsShop
         }
         public void Run()
         {
-            //InsertData();
-            //ReadData();
-            //ReadGroupedCarFromDB();
-
-            //edycja danych w bazie danych
-            //var cayman = this.ReadFirst("Cayman");
-            //cayman.Name = "nowySamochod";
-            //_carPartsDBContext.SaveChanges();
-
-
-            //usuwanie z bazy danych
-            //var carToRemove = this.ReadFirst("nowySamochod");
-            //_carPartsDBContext.CarParts.Remove(carToRemove);
-            //_carPartsDBContext.SaveChanges();
-
-            var repo = new ListRepository<CarParts>();
+            var repo = new MSQLRepository<CarParts>(_carPartsDBContext);
             repo.ItemAdded += CarPartRepositoryOnItemAdded;
             repo.ItemRemoved += CarPartRepositoryOnItemRemoved;
 
@@ -81,17 +67,17 @@ namespace CarPartsShop
                 }
                 else if (userChoose == "a" || userChoose == "A")
                 {
-                    var carPart = _userCommunication.AddNewCarPart();
+                    var carPart = _userCommunication.CreateNewCarPart();
                     _carPartsRepository.Add(carPart);
-                    _carPartsRepository.Save();
                     repo.Add(carPart);
+                    _carPartsRepository.Save();
                 }
                 else if (userChoose == "r" || userChoose == "R")
                 {
-                    var carPart = _userCommunication.RemovePartId();
-                    _carPartsRepository.Remove(carPart);
+                    var partToRemove = _userCommunication.GetPartById();
+                    _userCommunication.RemovePart(partToRemove);
+                    repo.Remove(partToRemove);
                     _carPartsRepository.Save();
-                    repo.Remove(carPart);
                 }
                 else if (userChoose == "s" || userChoose == "S")
                 {
@@ -99,12 +85,12 @@ namespace CarPartsShop
                 }
                 else if (userChoose == "i" || userChoose == "I")
                 {
-                    _userCommunication.ShowPartById();
+                    _userCommunication.GetPartById();
                 }
                 else if (userChoose =="e" || userChoose == "E")
                 {
-                    var carPart = _userCommunication.GetPartByIDToEdit();
-                    _userCommunication.EditPart(carPart);
+                    var partToEdit = _userCommunication.GetPartById();
+                    _userCommunication.EditPart(partToEdit);
                     _carPartsRepository.Save();
                 }
                 else if (userChoose == "c" || userChoose == "C")
@@ -117,22 +103,7 @@ namespace CarPartsShop
                 }
                 else if (userChoose == "g" || userChoose == "G")
                 {
-                    var groups = _carPartsDBContext.CarParts
-                        .GroupBy(x => x.ModelOfCar)
-                        .Select(g => new
-                        {
-                            Name = g.Key,
-                            CarParts = g.Select(c => new {c.Sales, c.NameOfPart, c.Price})
-                        }).ToList();
-                    foreach (var group in groups)
-                    {
-                        Console.WriteLine(group.Name);
-                        Console.WriteLine("=========");
-                        foreach (var part in group.CarParts)
-                        {
-                            Console.WriteLine($"{part.NameOfPart}, sales {part.Sales}, each cost {part.Price}");
-                        }
-                    }
+                    _userCommunication.GroupedData();
                 }
                 else
                 {
@@ -141,11 +112,6 @@ namespace CarPartsShop
                 }
             }
         }
-        private CarParts? ReadFirst(string name)
-        {
-            return _carPartsDBContext.CarParts.FirstOrDefault(x => x.NameOfPart == name);
-        }
-
         public static void CarPartRepositoryOnItemAdded(object sender, CarParts e)
         {
             Console.WriteLine($"Car Parts added: {e.NameOfPart}, from {sender.GetType().Name}");
@@ -155,5 +121,25 @@ namespace CarPartsShop
         {
             Console.WriteLine($"Car Parts removed: {e.NameOfPart}, from {sender.GetType().Name}");
         }
+
+        //public void GetTotalSales()
+        //{
+        //    var groups = _carPartsDBContext.CarParts.GroupBy(x => x.ModelOfCar);
+        //    foreach ( var group in groups)
+        //    {
+        //        var carPart = group.GroupBy(x => x.NameOfPart).Select(g => new
+        //        {
+        //            Name = g.Key,
+        //            Sales = g.Select(x => x.Sales.Value),
+        //        });
+        //        int total = 0;
+        //        foreach ( var part in carPart)
+        //        {
+        //            total += part.Sales.Sum();
+        //        }
+        //        Console.WriteLine($"Model {group}");
+        //    }
+            
+        //}
     }
 }
