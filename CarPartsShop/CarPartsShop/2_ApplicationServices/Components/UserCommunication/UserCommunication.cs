@@ -1,11 +1,7 @@
 ﻿using CarPartsShop.Data;
 using CarPartsShop.Data.Entities;
 using CarPartsShop.Data.Repositories;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace CarPartsShop.Components.UserCommunication
 {
@@ -31,7 +27,7 @@ namespace CarPartsShop.Components.UserCommunication
             sb.AppendLine("(E) - Edit part by Id");
             sb.AppendLine("(C) - Create new file from DB");
             sb.AppendLine("(In) - Insert data from file to DB");
-            sb.AppendLine("[G] - Grouped data from DB");
+            sb.AppendLine("(G) - Grouped data from DB");
             sb.Append("Select what do you want: ");
 
             return sb.ToString();
@@ -61,7 +57,7 @@ namespace CarPartsShop.Components.UserCommunication
             }
             else
             {
-                Console.WriteLine("Wrong format of data");
+                throw new Exception("Wrong format of data");
             }
             Console.Write("Sales of this part: ");
             var sales = Console.ReadLine();
@@ -71,7 +67,7 @@ namespace CarPartsShop.Components.UserCommunication
             }
             else
             {
-                Console.WriteLine("Wrong format of data");
+                throw new Exception("Wrong format of data");
             }
             carPart.NameOfPart = nameOfCarPart;
             carPart.ModelOfCar = nameOfCarModel;
@@ -87,7 +83,7 @@ namespace CarPartsShop.Components.UserCommunication
 
         public void EditPart(CarParts partToEdit)
         {
-            Console.Write($"You want edit part: {partToEdit.NameOfPart}, at Id: {partToEdit.Id}");
+            Console.WriteLine($"You want edit part: {partToEdit.NameOfPart}, at Id: {partToEdit.Id}");
             Console.WriteLine("Which property you want to edit :");
             Console.WriteLine("[N] - Name of the part");
             Console.WriteLine("[M] - Model of the car");
@@ -124,7 +120,7 @@ namespace CarPartsShop.Components.UserCommunication
                 }
                 else
                 {
-                    Console.WriteLine("This is not integer!");
+                    throw new Exception("This is not integer!");
                 }
             }
             else if (editChoose == "p" || editChoose == "P")
@@ -137,7 +133,7 @@ namespace CarPartsShop.Components.UserCommunication
                 }
                 else
                 {
-                    Console.WriteLine("This is not integer!");
+                    throw new Exception("This is not integer!");
                 }
             }
         } 
@@ -154,7 +150,7 @@ namespace CarPartsShop.Components.UserCommunication
             }
             else
             {
-                Console.WriteLine("The base is empty");
+                throw new Exception("The base is empty");
             }
         }
 
@@ -171,13 +167,13 @@ namespace CarPartsShop.Components.UserCommunication
                 }
                 else
                 {
-                    Console.WriteLine("Id is not exist");
+                    throw new Exception("Id is not exist");
                     return null;
                 }
             }
             else
             {
-                Console.WriteLine("This Id is not integer!");
+                throw new Exception("This Id is not integer!");
                 return null;
             }
         }

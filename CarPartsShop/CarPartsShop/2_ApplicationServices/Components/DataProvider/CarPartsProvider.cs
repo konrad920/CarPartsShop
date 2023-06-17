@@ -1,6 +1,7 @@
-﻿using CarPartsShop.Data.Entities;
+﻿
+
+using CarPartsShop.Data.Entities;
 using CarPartsShop.Data.Repositories;
-using System;
 
 namespace CarPartsShop.Components.DataProvider
 {
