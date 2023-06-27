@@ -50,10 +50,10 @@ namespace CarPartsShop.Data.Repositories
 
         public void Save()
         {
-            //foreach (var item in _items)
-            //{
-            //    Console.WriteLine(item);
-            //}
+            foreach (var item in _items)
+            {
+                Console.WriteLine(item);
+            }
         }
     }
 }

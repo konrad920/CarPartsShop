@@ -50,10 +50,5 @@ namespace CarPartsShop.Data.Repositories
         {
             _carPartsDBContext.SaveChanges();
         }
-
-        public void Edit()
-        {
-
-        }
     }
 }

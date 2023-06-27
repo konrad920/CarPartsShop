@@ -60,7 +60,7 @@ namespace CarPartsShop
                         _carPartsRepository.Add(carPart);
                         _carPartsRepository.Save();
                     }
-                    catch(Exception ex)
+                    catch (Exception ex)
                     {
                         Console.WriteLine($"Exception catched: {ex.Message}");
                     }
@@ -73,7 +73,7 @@ namespace CarPartsShop
                         _userCommunication.RemovePart(partToRemove);
                         _carPartsRepository.Save();
                     }
-                    catch(Exception ex)
+                    catch (Exception ex)
                     {
                         Console.WriteLine($"Exception catched: {ex.Message}");
                     }
@@ -100,7 +100,7 @@ namespace CarPartsShop
                         Console.WriteLine($"Exception catched: {ex.Message}");
                     }
                 }
-                else if (userChoose =="e" || userChoose == "E")
+                else if (userChoose == "e" || userChoose == "E")
                 {
                     try
                     {
@@ -131,11 +131,6 @@ namespace CarPartsShop
                     continue;
                 }
             }
-        }
-
-        private void _carPartsRepository_FileSavedAdded(object? sender, CarParts e)
-        {
-            throw new NotImplementedException();
         }
 
         public static void CarPartRepositoryOnItemAdded(object sender, CarParts e)

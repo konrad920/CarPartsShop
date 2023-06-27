@@ -12,7 +12,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 var services = new ServiceCollection();
 services.AddSingleton<IApp, App>();
-services.AddSingleton<IRepository<Employee>, ListRepository<Employee>>();
+services.AddSingleton<IRepository<Employee>, FilePartsRepository<Employee>>();
 services.AddSingleton<IRepository<CarParts>, MSQLRepository<CarParts>>();
 services.AddSingleton<IUserCommunication, UserCommunication>();
 services.AddSingleton<ICsvReader, CsvReader>();
